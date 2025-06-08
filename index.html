@@ -1,0 +1,165 @@
+  <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estación de Monitoreo MAVLink</title>
+    
+    <!-- CSS externo -->
+    <link rel="stylesheet" href="static/css/style.css">
+    
+    <!-- Librerías externas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <h1 class="header-title">
+                <span class="icon">🚁</span>
+                Estación de Monitoreo MAVLink
+            </h1>
+            <div class="connection-status" id="connectionStatus">
+                <span class="status-indicator" id="statusIndicator"></span>
+                <span class="status-text" id="statusText">Desconectado</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Panel de Control -->
+    <section class="control-panel">
+        <div class="control-group">
+            <label for="connectionType">Tipo de Conexión:</label>
+            <select id="connectionType" class="control-select">
+                <option value="serial">Puerto Serie</option>
+                <option value="tcp">TCP</option>
+                <option value="udp">UDP</option>
+                <option value="simulate">Simulación</option>
+            </select>
+        </div>
+
+        <div class="control-group" id="serialConfig">
+            <label for="serialPort">Puerto:</label>
+            <input type="text" id="serialPort" class="control-input" value="/dev/ttyACM0">
+        </div>
+
+        <div class="control-group" id="networkConfig" style="display: none;">
+            <label for="networkAddress">Dirección:</label>
+            <input type="text" id="networkAddress" class="control-input" value="127.0.0.1:14550">
+        </div>
+
+        <div class="control-actions">
+            <button id="connectBtn" class="btn btn-primary">Conectar</button>
+            <button id="disconnectBtn" class="btn btn-secondary" disabled>Desconectar</button>
+        </div>
+    </section>
+
+    <!-- Dashboard Principal -->
+    <main class="dashboard">
+        <!-- Métricas Principales -->
+        <section class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">📏</div>
+                <div class="metric-content">
+                    <div class="metric-label">Altitud</div>
+                    <div class="metric-value" id="altitude">--</div>
+                    <div class="metric-unit">metros</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">🚀</div>
+                <div class="metric-content">
+                    <div class="metric-label">Velocidad</div>
+                    <div class="metric-value" id="groundspeed">--</div>
+                    <div class="metric-unit">m/s</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">🔋</div>
+                <div class="metric-content">
+                    <div class="metric-label">Batería</div>
+                    <div class="metric-value" id="battery">--</div>
+                    <div class="metric-unit">%</div>
+                </div>
+            </div>
+
+            <div class="metric-card">
+                <div class="metric-icon">🧭</div>
+                <div class="metric-content">
+                    <div class="metric-label">Rumbo</div>
+                    <div class="metric-value" id="heading">--</div>
+                    <div class="metric-unit">°</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Información del Sistema -->
+        <section class="system-info">
+            <div class="info-card">
+                <h3>Estado del Sistema</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Modo de Vuelo:</span>
+                        <span class="info-value" id="flightMode">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Estado GPS:</span>
+                        <span class="info-value" id="gpsStatus">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Satélites:</span>
+                        <span class="info-value" id="satellites">--</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Armado:</span>
+                        <span class="info-value" id="armed">--</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>Actitud del Dron</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Inclinacion Izquierda/Dercha:</span>
+                        <span class="info-value" id="roll">--°</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Inclinación Frontal/Trasera:</span>
+                        <span class="info-value" id="pitch">--°</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Giro:</span>
+                        <span class="info-value" id="yaw">--°</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gráfico y Mapa -->
+        <section class="visualization-grid">
+            <div class="chart-container">
+                <h3>Altitud en Tiempo Real</h3>
+                <canvas id="altitudeChart"></canvas>
+            </div>
+
+            <div class="map-container">
+                <h3>Posición GPS</h3>
+                <div id="map" class="map"></div>
+            </div>
+        </section>
+
+        <!-- Alertas del Sistema -->
+        <section class="alerts-container" id="alertsContainer">
+            <!-- Las alertas se agregan dinámicamente -->
+        </section>
+    </main>
+
+    <!-- JavaScript externo -->
+    <script src="static/js/script.js"></script>
+</body>
+</html>
